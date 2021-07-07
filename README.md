@@ -1,0 +1,1 @@
+This is a simple, docker-compose based PoC solution for https://github.com/SamuelBucheliZ/bfh-apptrans-exercise
