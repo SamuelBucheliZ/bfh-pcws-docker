@@ -1,0 +1,41 @@
+version: '3'
+services:
+  pcws-web:
+    build:
+      context: ./tomcat
+    networks:
+      - pcws
+    ports:
+      - 8080:8080
+    volumes:
+      - ./volumes/datalogDirectory:/datalogDirectory
+    environment:
+      SPRING_PROFILES_ACTIVE: real
+      PCWS_DATALOG_DIRECTORY: /datalogDirectory
+      PCWS_ACCOUNT_SERVICE_URL: https://bfh-paketblitz-account-service.herokuapp.com
+      PCWS_DATASOURCE_JDBC_URL: jdbc:postgresql://pcws-db:5432/pcws-db
+      PCWS_DATASOURCE_USERNAME: pcws-user
+      PCWS_DATASOURCE_PASSWORD: pcws-password
+  pcws-db:
+    build:
+      context: ./postgresql
+    networks:
+      - pcws
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: pcws-user
+      POSTGRES_PASSWORD: pcws-password
+      POSTGRES_DB: pcws-db
+    # note that PostgreSQL typically also would require a volume, but omitted here for simplicity
+  pcws-datalog:
+    build:
+      context: ./datalog
+    volumes:
+      - ./volumes/datalogDirectory:/datalogDirectory
+    environment:
+      PCWS_DATALOG_DIRECTORY: /datalogDirectory
+      PCWS_DATALOG_SERVICE_URL: https://bfh-paketblitz-datalog-service.herokuapp.com
+
+networks:
+  pcws:
